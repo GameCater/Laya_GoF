@@ -1,0 +1,36 @@
+{
+  "_$ver": 1,
+  "_$id": "s4fdus5p",
+  "_$type": "Sprite",
+  "name": "View",
+  "width": 40,
+  "height": 20,
+  "pivotX": 20,
+  "pivotY": 10,
+  "_gcmds": [
+    {
+      "_$type": "DrawRectCmd",
+      "x": 0,
+      "y": 0,
+      "width": 1,
+      "height": 1,
+      "percent": true,
+      "lineWidth": 1,
+      "lineColor": "#000000",
+      "fillColor": "#FFFFFF"
+    }
+  ],
+  "_$comp": [
+    {
+      "_$type": "RigidBody",
+      "type": "kinematic",
+      "linearVelocity": {
+        "_$type": "Vector2"
+      }
+    },
+    {
+      "_$type": "8f172430-d004-4d82-b2d3-3485a7f5e6eb",
+      "scriptPath": "../src/Bullet.ts"
+    }
+  ]
+}

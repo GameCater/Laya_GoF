@@ -2,6 +2,7 @@ import { Actor, Command, JumpCommand, MoveCommand } from "./Command";
 import { A_Observer, B_Observer, MyEvent, Subject } from "./Observer";
 import Event from "./Event";
 import { State } from "./State_FSM";
+import { Breed } from "./ClassType";
 
 const { regClass, property } = Laya;
 
@@ -42,6 +43,20 @@ export class Main extends Laya.Script {
         this.bus.on('Jump', (data) => {
             console.log('Jump事件被触发: ' + data);
         })
+
+        // 类型对象
+        let none = new Breed();
+        let Alice = none.newMonster();
+        console.log('Alice:', Alice.health, Alice.attack);
+        
+        let goblin = new Breed(null, 50, '普通攻击');
+        let Joe = goblin.newMonster();
+        console.log('Joe:', Joe.health, Joe.attack);
+
+        let goblinWizard = new Breed(goblin, 0, '火焰弹');
+        let Yoh = goblinWizard.newMonster();
+        console.log('Yoh:', Yoh.health, Yoh.attack);
+
     }
 
     handleKeyDown(evt: Laya.Event): void {

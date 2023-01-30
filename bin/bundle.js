@@ -35,7 +35,7 @@ function __$decorate(assetId, codePath) {
   var __defProp = Object.defineProperty;
   var __name = (target, value) => __defProp(target, "name", { value, configurable: true });
 
-  // ../../../../../Document/Project/LayaAir/LayaAir3/Laya_GoF/src/Utils.ts
+  // E:/projects/laya3/Laya_GoF/src/Utils.ts
   var Vector = class {
     constructor(x, y) {
       this.x = 0;
@@ -49,7 +49,7 @@ function __$decorate(assetId, codePath) {
   };
   __name(Vector, "Vector");
 
-  // ../../../../../Document/Project/LayaAir/LayaAir3/Laya_GoF/src/EnemyState.ts
+  // E:/projects/laya3/Laya_GoF/src/EnemyState.ts
   var State = class {
     onUpdate(enemy, player) {
     }
@@ -68,10 +68,44 @@ function __$decorate(assetId, codePath) {
         enemy.state.enter(enemy);
       } else if (enemy.health < 80 && Vector.distance(enemy_position, player_position) <= enemy.scanDistance) {
         enemy.state = new DefensiveState();
+        enemy.state.enter(enemy);
+      }
+    }
+    do() {
+      let randNum = Math.floor(Math.random() * 100);
+      let dayTime = Math.floor(Math.random() * 2);
+      switch (dayTime) {
+        case DayTime.MorningTime:
+          if (randNum < 3) {
+            console.log("\u5DE1\u903B");
+          } else if (randNum < 10) {
+            console.log("\u5403\u996D");
+          } else {
+            console.log("\u5B88\u536B");
+          }
+          break;
+        case DayTime.AfterNoonTime:
+          if (randNum < 20) {
+            console.log("\u8D70\u52A8");
+          } else if (randNum < 32) {
+            console.log("\u5403\u996D");
+          } else {
+            console.log("\u5B88\u536B");
+          }
+          break;
+        case DayTime.NightTime:
+          if (randNum < 25) {
+            console.log("\u8D70\u52A8");
+          } else if (randNum < 40) {
+            console.log("\u5403\u996D");
+          } else {
+            console.log("\u5B88\u536B");
+          }
       }
     }
     enter(enemy) {
-      console.log("\u8FDB\u5165\u88AB\u52A8\u72B6\u6001");
+      console.log("\u8FDB\u5165\u88AB\u52A8\u9ED8\u8BA4\u72B6\u6001");
+      this.do();
     }
   };
   __name(PassiveState, "PassiveState");
@@ -79,26 +113,48 @@ function __$decorate(assetId, codePath) {
     onUpdate(enemy, player) {
       const enemy_position = new Vector(enemy.owner.x, enemy.owner.y);
       const player_position = new Vector(player.owner.x, player.owner.y);
-      if (Vector.distance(enemy_position, player_position) > enemy.scanDistance) {
+      if (enemy.health >= 80 && Vector.distance(enemy_position, player_position) >= enemy.scanDistance) {
         enemy.state = new PassiveState();
         enemy.state.enter(enemy);
-      } else if (enemy.health < 80 && Vector.distance(enemy_position, player_position) <= enemy.scanDistance) {
+      } else if (enemy.health < 80 && Vector.distance(enemy_position, player_position) < enemy.scanDistance) {
         enemy.state = new DefensiveState();
+        enemy.state.enter(enemy);
       }
+      this.follow(enemy, player);
     }
     enter(enemy) {
       console.log("\u8FDB\u5165\u653B\u51FB\u72B6\u6001");
+    }
+    follow(enemy, player) {
+      Laya.Tween.to(enemy.owner, { x: player.owner.x, y: player.owner.y }, 1e3);
     }
   };
   __name(ActiveState, "ActiveState");
   var DefensiveState = class extends State {
     onUpdate(enemy, player) {
-      console.log("\u9632\u5FA1\u73A9\u5BB6\u653B\u51FB");
+      const enemy_position = new Vector(enemy.owner.x, enemy.owner.y);
+      const player_position = new Vector(player.owner.x, player.owner.y);
+      if (Vector.distance(enemy_position, player_position) >= enemy.scanDistance) {
+        enemy.state = new PassiveState();
+        enemy.state.enter(enemy);
+      } else if (enemy.health < 80) {
+        enemy.state = new ActiveState();
+        enemy.state.enter(enemy);
+      }
+    }
+    enter(enemy) {
+      console.log("\u8FDB\u5165\u9632\u5FA1\u72B6\u6001");
     }
   };
   __name(DefensiveState, "DefensiveState");
+  var DayTime = /* @__PURE__ */ ((DayTime2) => {
+    DayTime2[DayTime2["MorningTime"] = 0] = "MorningTime";
+    DayTime2[DayTime2["AfterNoonTime"] = 1] = "AfterNoonTime";
+    DayTime2[DayTime2["NightTime"] = 2] = "NightTime";
+    return DayTime2;
+  })(DayTime || {});
 
-  // ../../../../../Document/Project/LayaAir/LayaAir3/Laya_GoF/src/Enemy.ts
+  // E:/projects/laya3/Laya_GoF/src/Enemy.ts
   var __decorate = __$decorate("12843c7a-55a3-4124-bf12-0e47353d5c5a", "../src/Enemy.ts");
   var _a;
   var { regClass, property } = Laya;
@@ -123,7 +179,7 @@ function __$decorate(assetId, codePath) {
     regClass()
   ], Enemy);
 
-  // ../../../../../Document/Project/LayaAir/LayaAir3/Laya_GoF/src/State_FSM.ts
+  // E:/projects/laya3/Laya_GoF/src/State_FSM.ts
   var ActorState = class {
     onKeyDown(evt, actor) {
     }
@@ -193,7 +249,7 @@ function __$decorate(assetId, codePath) {
   };
   __name(DivingState, "DivingState");
 
-  // ../../../../../Document/Project/LayaAir/LayaAir3/Laya_GoF/src/Command.ts
+  // E:/projects/laya3/Laya_GoF/src/Command.ts
   var Actor = class {
     constructor() {
       this.state = new StandingState();
@@ -213,7 +269,7 @@ function __$decorate(assetId, codePath) {
   };
   __name(Actor, "Actor");
 
-  // ../../../../../Document/Project/LayaAir/LayaAir3/Laya_GoF/src/Observer.ts
+  // E:/projects/laya3/Laya_GoF/src/Observer.ts
   var Observer = class {
     constructor() {
       this.name = "observer";
@@ -287,7 +343,7 @@ function __$decorate(assetId, codePath) {
   };
   __name(B_Observer, "B_Observer");
 
-  // ../../../../../Document/Project/LayaAir/LayaAir3/Laya_GoF/src/Event.ts
+  // E:/projects/laya3/Laya_GoF/src/Event.ts
   var Event = class {
     constructor() {
       this.listeners = {};
@@ -315,7 +371,43 @@ function __$decorate(assetId, codePath) {
   };
   __name(Event, "Event");
 
-  // ../../../../../Document/Project/LayaAir/LayaAir3/Laya_GoF/src/Main.ts
+  // E:/projects/laya3/Laya_GoF/src/ClassType.ts
+  var Breed = class {
+    constructor(parent, health, attack) {
+      this._health = 100;
+      this._attack = "\u653B\u51FB\u6CE2";
+      this._parent = null;
+      if (parent != null) {
+        this._parent = parent;
+        this._health = parent._health;
+        this._attack = parent._attack;
+      }
+      if (health) {
+        this._health = health;
+      }
+      if (attack) {
+        this._attack = attack;
+      }
+    }
+    newMonster() {
+      return new Monster(this);
+    }
+  };
+  __name(Breed, "Breed");
+  var Monster = class {
+    constructor(breed) {
+      this._breed = breed;
+    }
+    get health() {
+      return this._breed._health;
+    }
+    get attack() {
+      return this._breed._attack;
+    }
+  };
+  __name(Monster, "Monster");
+
+  // E:/projects/laya3/Laya_GoF/src/Main.ts
   var __decorate2 = __$decorate("7bad1742-6eed-4d8d-81c0-501dc5bf03d6", "../src/Main.ts");
   var { regClass: regClass2, property: property2 } = Laya;
   var Main = /* @__PURE__ */ __name(class Main2 extends Laya.Script {
@@ -340,6 +432,15 @@ function __$decorate(assetId, codePath) {
       this.bus.on("Jump", (data) => {
         console.log("Jump\u4E8B\u4EF6\u88AB\u89E6\u53D1: " + data);
       });
+      let none = new Breed();
+      let Alice = none.newMonster();
+      console.log("Alice:", Alice.health, Alice.attack);
+      let goblin = new Breed(null, 50, "\u666E\u901A\u653B\u51FB");
+      let Joe = goblin.newMonster();
+      console.log("Joe:", Joe.health, Joe.attack);
+      let goblinWizard = new Breed(goblin, 0, "\u706B\u7130\u5F39");
+      let Yoh = goblinWizard.newMonster();
+      console.log("Yoh:", Yoh.health, Yoh.attack);
     }
     handleKeyDown(evt) {
       this.actor.onKeyDown(evt);
@@ -353,8 +454,9 @@ function __$decorate(assetId, codePath) {
     regClass2()
   ], Main);
 
-  // ../../../../../Document/Project/LayaAir/LayaAir3/Laya_GoF/src/Player.ts
+  // E:/projects/laya3/Laya_GoF/src/Player.ts
   var __decorate3 = __$decorate("a51a9993-7212-4529-af9d-4d56a3c8a7a3", "../src/Player.ts");
+  var _a2;
   var { regClass: regClass3, property: property3 } = Laya;
   var Player = /* @__PURE__ */ __name(class Player2 extends Laya.Script {
     onAwake() {
@@ -362,24 +464,94 @@ function __$decorate(assetId, codePath) {
       this.self = this.owner;
       this.rgBody = this.self.getComponent(Laya.RigidBody);
     }
-    onKeyDown(evt) {
+    onKeyPress(evt) {
       if (evt.key.toLowerCase() === "w") {
         this.rgBody.setVelocity({ x: 0, y: -this.speed });
+        this.direction = [0, -1];
       } else if (evt.key.toLowerCase() === "s") {
         this.rgBody.setVelocity({ x: 0, y: this.speed });
+        this.direction = [0, 1];
       } else if (evt.key.toLowerCase() === "a") {
         this.rgBody.setVelocity({ x: -this.speed, y: 0 });
+        this.direction = [-1, 0];
       } else if (evt.key.toLowerCase() === "d") {
         this.rgBody.setVelocity({ x: this.speed, y: 0 });
+        this.direction = [1, 0];
       }
+    }
+    onKeyDown(evt) {
+      if (evt.key.toLowerCase() === " ") {
+        let bullet = Laya.Pool.getItemByCreateFun("Bullet", this.spawnBullet, this);
+        Laya.stage.addChild(bullet);
+        bullet.x = (this.self.width - bullet.width) / 2 + this.self.x + bullet.width / 2;
+        bullet.y = (this.self.height - bullet.height) / 2 + this.self.y + bullet.height / 2;
+        bullet.getComponent(Laya.Script).isDestoryed = false;
+        if (this.direction[0] !== 0) {
+          bullet.rotation = 0;
+        } else if (this.direction[1]) {
+          bullet.rotation = 90;
+        }
+        bullet.getComponent(Laya.Script).move(this.direction.map((d) => d * 10));
+      }
+    }
+    spawnBullet() {
+      console.log("bullet created");
+      let bullet = this.bulletPrefab.create();
+      return bullet;
+    }
+    onKeyUp(evt) {
+      this.rgBody.setVelocity({ x: 0, y: 0 });
     }
   }, "Player");
   __decorate3([
     property3(),
     __metadata("design:type", Number)
   ], Player.prototype, "speed", void 0);
+  __decorate3([
+    property3(),
+    __metadata("design:type", typeof (_a2 = typeof Laya !== "undefined" && Laya.Prefab) === "function" ? _a2 : Object)
+  ], Player.prototype, "bulletPrefab", void 0);
   Player = __decorate3([
     regClass3()
   ], Player);
+
+  // E:/projects/laya3/Laya_GoF/src/Bullet.ts
+  var __decorate4 = __$decorate("8f172430-d004-4d82-b2d3-3485a7f5e6eb", "../src/Bullet.ts");
+  var { regClass: regClass4 } = Laya;
+  var Bullet = /* @__PURE__ */ __name(class Bullet2 extends Laya.Script {
+    constructor() {
+      super(...arguments);
+      this.time = 500;
+      this.curTime = 0;
+      this.isDestoryed = false;
+    }
+    onAwake() {
+      this.self = this.owner;
+      this.rgBody = this.self.getComponent(Laya.RigidBody);
+    }
+    onUpdate() {
+      if (this.isDestoryed)
+        return;
+      this.curTime += Laya.timer.delta;
+      if (this.curTime > this.time) {
+        this.curTime = 0;
+        this.isDestoryed = true;
+        this.rgBody.setVelocity({ x: 0, y: 0 });
+        this.self.removeSelf();
+        Laya.Pool.recover("Bullet", this.self);
+      }
+    }
+    move(direction) {
+      if (!this.isDestoryed && this.curTime < this.time) {
+        this.rgBody.setVelocity({ x: direction[0], y: direction[1] });
+      }
+    }
+    onDestroy() {
+      super.destroy();
+    }
+  }, "Bullet");
+  Bullet = __decorate4([
+    regClass4()
+  ], Bullet);
 })();
 //# sourceMappingURL=bundle.js.map

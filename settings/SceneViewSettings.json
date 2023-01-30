@@ -1,0 +1,16 @@
+{
+  "camera": {
+    "fieldOfView": 60,
+    "nearPlane": 0.5,
+    "farPlane": 20000,
+    "zoomSpeed": 1,
+    "transformSpeed": 1,
+    "depthTexture": false
+  },
+  "grid": {
+    "show": true
+  },
+  "canvas": {
+    "bgColor": "rgba(0, 0, 0, 1)"
+  }
+}

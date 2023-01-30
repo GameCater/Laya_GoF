@@ -10,4 +10,5 @@ export class Vector {
   static distance(vec1: Vector, vec2: Vector): number {
     return Math.sqrt(Math.pow(vec1.x - vec2.x, 2) + Math.pow(vec1.y - vec2.y, 2));
   }
+
 }

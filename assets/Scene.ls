@@ -33,7 +33,11 @@
         {
           "_$type": "a51a9993-7212-4529-af9d-4d56a3c8a7a3",
           "scriptPath": "../src/Player.ts",
-          "speed": 5
+          "speed": 5,
+          "bulletPrefab": {
+            "_$uuid": "f4214af3-a6b4-4c47-9a10-704468171dc9",
+            "_$type": "Prefab"
+          }
         },
         {
           "_$type": "RigidBody",
@@ -45,6 +49,34 @@
         {
           "_$type": "BoxCollider",
           "isSensor": true
+        }
+      ],
+      "_$child": [
+        {
+          "_$id": "ivoh7h8v",
+          "_$prefab": "f4214af3-a6b4-4c47-9a10-704468171dc9",
+          "name": "Bullet",
+          "active": true,
+          "x": 45,
+          "y": 18,
+          "width": 40,
+          "height": 20,
+          "pivotX": 0,
+          "pivotY": 0,
+          "scaleX": 1,
+          "scaleY": 1,
+          "skewX": 0,
+          "skewY": 0,
+          "rotation": 0,
+          "visible": false,
+          "alpha": 1,
+          "zOrder": 0,
+          "blendMode": null,
+          "mouseEnabled": false,
+          "mouseThrough": false,
+          "hitTestPrior": false,
+          "drawCallOptimize": false,
+          "cacheAs": "none"
         }
       ]
     },

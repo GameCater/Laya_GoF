@@ -1,11 +1,11 @@
 {
   "resolution": {
-    "designWidth": 1136,
-    "designHeight": 640,
-    "scaleMode": "fixedheight",
+    "designWidth": 1920,
+    "designHeight": 1080,
+    "scaleMode": "showall",
     "screenMode": "none",
     "alignV": "top",
-    "alignH": "left",
+    "alignH": "center",
     "backgroundColor": "#888888"
   },
   "2D": {
@@ -48,7 +48,7 @@
     "laya.spine": false
   },
   "spineVersion": "3.8",
-  "stat": false,
+  "stat": true,
   "vConsole": false,
   "alertGlobalError": false
 }
