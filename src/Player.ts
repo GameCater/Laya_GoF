@@ -14,7 +14,7 @@ export default class Player extends Laya.Script {
     @property()
     bulletPrefab: Laya.Prefab;
 
-    private direction: number[];
+    private direction: number[] = [0, 1];
 
     onAwake(): void {
         Laya.stage.focus = this.owner;

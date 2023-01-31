@@ -35,6 +35,55 @@ function __$decorate(assetId, codePath) {
   var __defProp = Object.defineProperty;
   var __name = (target, value) => __defProp(target, "name", { value, configurable: true });
 
+  // E:/projects/laya3/Laya_GoF/src/Bullet.ts
+  var __decorate = __$decorate("8f172430-d004-4d82-b2d3-3485a7f5e6eb", "../src/Bullet.ts");
+  var { regClass } = Laya;
+  var Bullet = /* @__PURE__ */ __name(class Bullet2 extends Laya.Script {
+    constructor() {
+      super(...arguments);
+      this.time = 1e3;
+      this.curTime = 0;
+      this.isDestoryed = false;
+      this.damage = 5;
+    }
+    onAwake() {
+      this.self = this.owner;
+      this.rgBody = this.self.getComponent(Laya.RigidBody);
+    }
+    onUpdate() {
+      if (this.isDestoryed)
+        return;
+      this.curTime += Laya.timer.delta;
+      if (this.curTime > this.time) {
+        this.destroySelf();
+      }
+    }
+    destroySelf() {
+      this.curTime = 0;
+      this.isDestoryed = true;
+      this.rgBody.setVelocity({ x: 0, y: 0 });
+      this.self.removeSelf();
+      Laya.Pool.recover("Bullet", this.self);
+    }
+    move(direction) {
+      if (!this.isDestoryed && this.curTime < this.time) {
+        this.rgBody.setVelocity({ x: direction[0], y: direction[1] });
+      }
+    }
+    onTriggerEnter(other) {
+      if (other.owner.name === "Enemy") {
+        this.destroySelf();
+        other.owner.event("Damage", this.damage);
+      }
+    }
+    onDestroy() {
+      super.destroy();
+    }
+  }, "Bullet");
+  Bullet = __decorate([
+    regClass()
+  ], Bullet);
+
   // E:/projects/laya3/Laya_GoF/src/Utils.ts
   var Vector = class {
     constructor(x, y) {
@@ -137,7 +186,7 @@ function __$decorate(assetId, codePath) {
       if (Vector.distance(enemy_position, player_position) >= enemy.scanDistance) {
         enemy.state = new PassiveState();
         enemy.state.enter(enemy);
-      } else if (enemy.health < 80) {
+      } else if (enemy.health >= 80) {
         enemy.state = new ActiveState();
         enemy.state.enter(enemy);
       }
@@ -155,9 +204,9 @@ function __$decorate(assetId, codePath) {
   })(DayTime || {});
 
   // E:/projects/laya3/Laya_GoF/src/Enemy.ts
-  var __decorate = __$decorate("12843c7a-55a3-4124-bf12-0e47353d5c5a", "../src/Enemy.ts");
+  var __decorate2 = __$decorate("12843c7a-55a3-4124-bf12-0e47353d5c5a", "../src/Enemy.ts");
   var _a;
-  var { regClass, property } = Laya;
+  var { regClass: regClass2, property } = Laya;
   var Enemy = /* @__PURE__ */ __name(class Enemy2 extends Laya.Script {
     constructor() {
       super(...arguments);
@@ -165,18 +214,38 @@ function __$decorate(assetId, codePath) {
       this.state = new PassiveState();
       this.scanDistance = 200;
     }
+    onAwake() {
+      this.animator = this.owner.getComponent(Laya.Animator2D);
+    }
     onEnable() {
+      this.owner.on("Damage", this, this.handleDamage);
+      this.health = 100;
+      this.state = new PassiveState();
+      this.animator.setParamsBool("Death", false);
+    }
+    handleDamage(damage) {
+      this.health -= damage;
+      if (this.health < 0) {
+        this.animator.setParamsBool("Death", true);
+        this.owner.removeSelf();
+        Laya.Pool.recover("Enemy", this.owner);
+        Laya.timer.once(2e3, this, () => {
+          let newEnemy = Laya.Pool.getItem("Enemy");
+          newEnemy.pos(Math.random() * Laya.stage.width, Math.random() * Laya.stage.height);
+          Laya.stage.addChild(newEnemy);
+        });
+      }
     }
     onUpdate() {
       this.state.onUpdate(this, this.player.getComponent(Laya.Script));
     }
   }, "Enemy");
-  __decorate([
+  __decorate2([
     property(),
     __metadata("design:type", typeof (_a = typeof Laya !== "undefined" && Laya.Sprite) === "function" ? _a : Object)
   ], Enemy.prototype, "player", void 0);
-  Enemy = __decorate([
-    regClass()
+  Enemy = __decorate2([
+    regClass2()
   ], Enemy);
 
   // E:/projects/laya3/Laya_GoF/src/State_FSM.ts
@@ -407,9 +476,45 @@ function __$decorate(assetId, codePath) {
   };
   __name(Monster, "Monster");
 
+  // E:/projects/laya3/Laya_GoF/src/Mediator.ts
+  var Mediator = class {
+    constructor() {
+      this.clients = [];
+    }
+    register(client) {
+      for (let i = 0; i < this.clients.length; i++) {
+        if (this.clients[i] === client) {
+          return;
+        }
+      }
+      this.clients.push(client);
+    }
+    notice(from, message) {
+      this.clients.forEach((c) => {
+        if (from !== c)
+          c.receiveMessage(message);
+      });
+    }
+  };
+  __name(Mediator, "Mediator");
+  var Client = class {
+    constructor(mediator, name) {
+      this.mediator = mediator;
+      this.name = name;
+    }
+    sendMessage(message) {
+      console.log(this.name + " \u53D1\u9001\uFF1A" + message);
+      this.mediator.notice(this, message);
+    }
+    receiveMessage(message) {
+      console.log(this.name + " \u63A5\u6536\uFF1A" + message);
+    }
+  };
+  __name(Client, "Client");
+
   // E:/projects/laya3/Laya_GoF/src/Main.ts
-  var __decorate2 = __$decorate("7bad1742-6eed-4d8d-81c0-501dc5bf03d6", "../src/Main.ts");
-  var { regClass: regClass2, property: property2 } = Laya;
+  var __decorate3 = __$decorate("7bad1742-6eed-4d8d-81c0-501dc5bf03d6", "../src/Main.ts");
+  var { regClass: regClass3, property: property2 } = Laya;
   var Main = /* @__PURE__ */ __name(class Main2 extends Laya.Script {
     constructor() {
       super(...arguments);
@@ -441,6 +546,14 @@ function __$decorate(assetId, codePath) {
       let goblinWizard = new Breed(goblin, 0, "\u706B\u7130\u5F39");
       let Yoh = goblinWizard.newMonster();
       console.log("Yoh:", Yoh.health, Yoh.attack);
+      let mediator = new Mediator();
+      let clientA = new Client(mediator, "clientA");
+      let clientB = new Client(mediator, "clientB");
+      let clientC = new Client(mediator, "clientC");
+      mediator.register(clientA);
+      mediator.register(clientB);
+      mediator.register(clientC);
+      clientA.sendMessage("ClientA enter");
     }
     handleKeyDown(evt) {
       this.actor.onKeyDown(evt);
@@ -450,15 +563,19 @@ function __$decorate(assetId, codePath) {
     }
   }, "Main");
   Main.MAX_TIME = 1500;
-  Main = __decorate2([
-    regClass2()
+  Main = __decorate3([
+    regClass3()
   ], Main);
 
   // E:/projects/laya3/Laya_GoF/src/Player.ts
-  var __decorate3 = __$decorate("a51a9993-7212-4529-af9d-4d56a3c8a7a3", "../src/Player.ts");
+  var __decorate4 = __$decorate("a51a9993-7212-4529-af9d-4d56a3c8a7a3", "../src/Player.ts");
   var _a2;
-  var { regClass: regClass3, property: property3 } = Laya;
+  var { regClass: regClass4, property: property3 } = Laya;
   var Player = /* @__PURE__ */ __name(class Player2 extends Laya.Script {
+    constructor() {
+      super(...arguments);
+      this.direction = [0, 1];
+    }
     onAwake() {
       Laya.stage.focus = this.owner;
       this.self = this.owner;
@@ -503,55 +620,16 @@ function __$decorate(assetId, codePath) {
       this.rgBody.setVelocity({ x: 0, y: 0 });
     }
   }, "Player");
-  __decorate3([
+  __decorate4([
     property3(),
     __metadata("design:type", Number)
   ], Player.prototype, "speed", void 0);
-  __decorate3([
+  __decorate4([
     property3(),
     __metadata("design:type", typeof (_a2 = typeof Laya !== "undefined" && Laya.Prefab) === "function" ? _a2 : Object)
   ], Player.prototype, "bulletPrefab", void 0);
-  Player = __decorate3([
-    regClass3()
-  ], Player);
-
-  // E:/projects/laya3/Laya_GoF/src/Bullet.ts
-  var __decorate4 = __$decorate("8f172430-d004-4d82-b2d3-3485a7f5e6eb", "../src/Bullet.ts");
-  var { regClass: regClass4 } = Laya;
-  var Bullet = /* @__PURE__ */ __name(class Bullet2 extends Laya.Script {
-    constructor() {
-      super(...arguments);
-      this.time = 500;
-      this.curTime = 0;
-      this.isDestoryed = false;
-    }
-    onAwake() {
-      this.self = this.owner;
-      this.rgBody = this.self.getComponent(Laya.RigidBody);
-    }
-    onUpdate() {
-      if (this.isDestoryed)
-        return;
-      this.curTime += Laya.timer.delta;
-      if (this.curTime > this.time) {
-        this.curTime = 0;
-        this.isDestoryed = true;
-        this.rgBody.setVelocity({ x: 0, y: 0 });
-        this.self.removeSelf();
-        Laya.Pool.recover("Bullet", this.self);
-      }
-    }
-    move(direction) {
-      if (!this.isDestoryed && this.curTime < this.time) {
-        this.rgBody.setVelocity({ x: direction[0], y: direction[1] });
-      }
-    }
-    onDestroy() {
-      super.destroy();
-    }
-  }, "Bullet");
-  Bullet = __decorate4([
+  Player = __decorate4([
     regClass4()
-  ], Bullet);
+  ], Player);
 })();
 //# sourceMappingURL=bundle.js.map

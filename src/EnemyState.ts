@@ -108,7 +108,7 @@ export class DefensiveState extends State {
         if (Vector.distance(enemy_position, player_position) >= enemy.scanDistance) {
             enemy.state = new PassiveState();
             enemy.state.enter(enemy);
-        } else if (enemy.health < 80) {
+        } else if (enemy.health >= 80) {
             enemy.state = new ActiveState();
             enemy.state.enter(enemy);
         }

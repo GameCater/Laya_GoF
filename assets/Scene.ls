@@ -7,6 +7,12 @@
   "top": 0,
   "bottom": 0,
   "name": "Scene2D",
+  "_$comp": [
+    {
+      "_$type": "7bad1742-6eed-4d8d-81c0-501dc5bf03d6",
+      "scriptPath": "../src/Main.ts"
+    }
+  ],
   "_$child": [
     {
       "_$id": "qolspto8",
@@ -14,7 +20,7 @@
       "name": "Player",
       "x": 518,
       "y": 524,
-      "width": 56,
+      "width": 54,
       "height": 54,
       "_gcmds": [
         {
@@ -48,7 +54,9 @@
         },
         {
           "_$type": "BoxCollider",
-          "isSensor": true
+          "isSensor": true,
+          "width": 54,
+          "height": 54
         }
       ],
       "_$child": [
@@ -87,7 +95,9 @@
       "x": 500,
       "y": 106,
       "width": 78,
-      "height": 83,
+      "height": 78,
+      "pivotX": 39,
+      "pivotY": 39,
       "_gcmds": [
         {
           "_$type": "DrawRectCmd",
@@ -108,6 +118,44 @@
           "player": {
             "_$ref": "qolspto8"
           }
+        },
+        {
+          "_$type": "RigidBody",
+          "type": "kinematic",
+          "linearVelocity": {
+            "_$type": "Vector2"
+          }
+        },
+        {
+          "_$type": "BoxCollider",
+          "width": 78,
+          "height": 78
+        },
+        {
+          "_$type": "Animator2D",
+          "controller": {
+            "_$uuid": "730728a2-21ba-4ff6-ae16-4d57d389aa7e",
+            "_$type": "AnimationController2D"
+          },
+          "controllerLayers": [
+            {
+              "_$type": "AnimatorControllerLayer2D",
+              "name": "Base Layer",
+              "states": [
+                {
+                  "_$type": "AnimatorState2D",
+                  "name": "death",
+                  "clipStart": 0,
+                  "clip": {
+                    "_$uuid": "664b4c12-b6ac-4011-bff8-59e0770538c7",
+                    "_$type": "AnimationClip2D"
+                  },
+                  "soloTransitions": []
+                }
+              ],
+              "defaultStateName": "death"
+            }
+          ]
         }
       ]
     }

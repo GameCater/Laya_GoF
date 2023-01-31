@@ -31,6 +31,13 @@
     {
       "_$type": "8f172430-d004-4d82-b2d3-3485a7f5e6eb",
       "scriptPath": "../src/Bullet.ts"
+    },
+    {
+      "_$type": "BoxCollider",
+      "x": -20,
+      "y": -10,
+      "width": 40,
+      "height": 20
     }
   ]
 }

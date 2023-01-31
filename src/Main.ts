@@ -3,6 +3,7 @@ import { A_Observer, B_Observer, MyEvent, Subject } from "./Observer";
 import Event from "./Event";
 import { State } from "./State_FSM";
 import { Breed } from "./ClassType";
+import { Client, Mediator } from "./Mediator";
 
 const { regClass, property } = Laya;
 
@@ -57,6 +58,18 @@ export class Main extends Laya.Script {
         let Yoh = goblinWizard.newMonster();
         console.log('Yoh:', Yoh.health, Yoh.attack);
 
+
+        // 中介者模式 模拟聊天室
+        let mediator = new Mediator();
+        let clientA = new Client(mediator, 'clientA');
+        let clientB = new Client(mediator, 'clientB');
+        let clientC = new Client(mediator, 'clientC');
+
+        mediator.register(clientA);
+        mediator.register(clientB);
+        mediator.register(clientC);
+
+        clientA.sendMessage('ClientA enter');
     }
 
     handleKeyDown(evt: Laya.Event): void {
