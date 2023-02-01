@@ -1,6 +1,7 @@
 {
   "_$ver": 1,
   "_$id": "lx8mwule",
+  "_$runtime": "res://f93993db-43e8-4700-a9dc-bcbdf7a23edb",
   "_$type": "Scene",
   "left": 0,
   "right": 0,
@@ -108,7 +109,7 @@
           "percent": true,
           "lineWidth": 1,
           "lineColor": "#000000",
-          "fillColor": "rgba(220, 29, 29, 1)"
+          "fillColor": "rgba(255, 36, 52, 1)"
         }
       ],
       "_$comp": [
@@ -156,6 +157,53 @@
               "defaultStateName": "death"
             }
           ]
+        }
+      ]
+    },
+    {
+      "_$id": "s2xc5md2",
+      "_$type": "VBox",
+      "name": "VBox",
+      "x": 1720,
+      "y": 190,
+      "width": 200,
+      "height": 700,
+      "mouseEnabled": true,
+      "bgColor": "rgba(213, 186, 99, 1)",
+      "space": 0,
+      "align": "center",
+      "_$child": [
+        {
+          "_$id": "jdboga4f",
+          "_$type": "Label",
+          "name": "Label",
+          "width": 200,
+          "height": 81,
+          "centerX": 0,
+          "text": "敌人栏",
+          "fontSize": 30,
+          "color": "#FFFFFF",
+          "align": "center",
+          "valign": "middle",
+          "overflow": "visible",
+          "leading": 0,
+          "padding": "0,0,0,0"
+        },
+        {
+          "_$id": "qo1p0769",
+          "_$var": true,
+          "_$type": "List",
+          "name": "list_enemies",
+          "y": 81,
+          "width": 200,
+          "height": 619,
+          "mouseEnabled": true,
+          "centerX": 0,
+          "repeatX": 1,
+          "repeatY": 4,
+          "spaceY": 20,
+          "scrollType": 2,
+          "selectEnable": true
         }
       ]
     }

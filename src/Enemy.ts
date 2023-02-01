@@ -44,7 +44,8 @@ export default class Enemy extends Laya.Script {
     }
 
     override onUpdate(): void {
-        this.state.onUpdate(this, this.player.getComponent(Laya.Script) as Player);
+        if (this.player) {
+            this.state.onUpdate(this, this.player.getComponent(Laya.Script) as Player);
+        }
     }
-
 }

@@ -237,7 +237,9 @@ function __$decorate(assetId, codePath) {
       }
     }
     onUpdate() {
-      this.state.onUpdate(this, this.player.getComponent(Laya.Script));
+      if (this.player) {
+        this.state.onUpdate(this, this.player.getComponent(Laya.Script));
+      }
     }
   }, "Enemy");
   __decorate2([
@@ -521,6 +523,10 @@ function __$decorate(assetId, codePath) {
       this._state = 0 /* STATE_STANDING */;
       this.time = 0;
     }
+    initialUI() {
+      this.ui = this.owner.scene;
+      this.ui.baseUI(this.ui);
+    }
     onStart() {
       console.log("Game start");
       Laya.stage.on(Laya.Event.KEY_DOWN, this, this.handleKeyDown);
@@ -554,9 +560,9 @@ function __$decorate(assetId, codePath) {
       mediator.register(clientB);
       mediator.register(clientC);
       clientA.sendMessage("ClientA enter");
+      this.initialUI();
     }
     handleKeyDown(evt) {
-      this.actor.onKeyDown(evt);
     }
     onUpdate() {
       this.actor.onUpdate();
@@ -567,10 +573,101 @@ function __$decorate(assetId, codePath) {
     regClass3()
   ], Main);
 
-  // E:/projects/laya3/Laya_GoF/src/Player.ts
-  var __decorate4 = __$decorate("a51a9993-7212-4529-af9d-4d56a3c8a7a3", "../src/Player.ts");
-  var _a2;
+  // E:/projects/laya3/Laya_GoF/src/MainUIRT.generated.ts
+  var MainUIRTBase = class extends Laya.Scene {
+  };
+  __name(MainUIRTBase, "MainUIRTBase");
+
+  // E:/projects/laya3/Laya_GoF/src/MainUIRT.ts
+  var __decorate4 = __$decorate("f93993db-43e8-4700-a9dc-bcbdf7a23edb", "../src/MainUIRT.ts");
   var { regClass: regClass4, property: property3 } = Laya;
+  var MainUI = /* @__PURE__ */ __name(class MainUI2 extends MainUIRTBase {
+    constructor() {
+      super();
+      this.prefabUrls = [
+        "Enemy.lh"
+      ];
+    }
+    baseUI(ui) {
+      this.list_enemies.array = this.prefabUrls;
+      this.list_enemies.itemRender = ListItem;
+      this.list_enemies.vScrollBarSkin = "";
+      this.list_enemies.renderHandler = Laya.Handler.create(this, (cell) => {
+        cell.init();
+      });
+    }
+  }, "MainUI");
+  MainUI = __decorate4([
+    regClass4(),
+    __metadata("design:paramtypes", [])
+  ], MainUI);
+  var ListItem = class extends Laya.Box {
+    set dataSource(data) {
+      this.enemyPrefabUrl = data;
+    }
+    constructor() {
+      super();
+      this.dragRegion = new Laya.Rectangle(0, 0, Laya.stage.width - 200, Laya.stage.height);
+      this.width = 144;
+      this.height = 144;
+      this.left = 28;
+      this.bgColor = "#eee";
+    }
+    init() {
+      Laya.loader.load(`resources/${this.enemyPrefabUrl}`).then((res) => {
+        let enemy = res.create();
+        enemy.left = this.width - enemy.width >> 1;
+        enemy.top = this.height - enemy.height >> 1;
+        this.child = enemy;
+        this.addChild(enemy);
+        this.child.on(Laya.Event.MOUSE_DOWN, this, (e) => {
+          this.handleMouseDown(e, res);
+        });
+        Laya.stage.on(Laya.Event.MOUSE_UP, this, this.handleMouseUp);
+      });
+    }
+    handleMouseUp() {
+      if (!this.copied)
+        return;
+      this.copied.destroy();
+      this.copied = null;
+    }
+    handleMouseDown(e, data) {
+      if (this.copied)
+        return;
+      this.copyTarget(e, data);
+    }
+    copyTarget(e, res) {
+      if (this.copied)
+        return;
+      let copied = res.create();
+      copied.x = Laya.stage.mouseX - 10;
+      copied.y = Laya.stage.mouseY - 10;
+      this.copied = copied;
+      Laya.stage.addChild(this.copied);
+      this.storeX = copied.x;
+      this.storeY = copied.y;
+      this.XTouch = Laya.stage.mouseX;
+      this.YTouch = Laya.stage.mouseY;
+      this.copied.on(Laya.Event.MOUSE_MOVE, this, (e2) => {
+        let x = Laya.stage.mouseX - (this.XTouch - this.storeX);
+        let y = Laya.stage.mouseY - (this.YTouch - this.storeY);
+        this.copied.pos(x, y);
+      });
+    }
+    onDestroy() {
+      Laya.stage.off(Laya.Event.MOUSE_UP, this, this.handleMouseUp);
+      if (this.child) {
+      }
+      super.destroy();
+    }
+  };
+  __name(ListItem, "ListItem");
+
+  // E:/projects/laya3/Laya_GoF/src/Player.ts
+  var __decorate5 = __$decorate("a51a9993-7212-4529-af9d-4d56a3c8a7a3", "../src/Player.ts");
+  var _a2;
+  var { regClass: regClass5, property: property4 } = Laya;
   var Player = /* @__PURE__ */ __name(class Player2 extends Laya.Script {
     constructor() {
       super(...arguments);
@@ -620,16 +717,16 @@ function __$decorate(assetId, codePath) {
       this.rgBody.setVelocity({ x: 0, y: 0 });
     }
   }, "Player");
-  __decorate4([
-    property3(),
+  __decorate5([
+    property4(),
     __metadata("design:type", Number)
   ], Player.prototype, "speed", void 0);
-  __decorate4([
-    property3(),
+  __decorate5([
+    property4(),
     __metadata("design:type", typeof (_a2 = typeof Laya !== "undefined" && Laya.Prefab) === "function" ? _a2 : Object)
   ], Player.prototype, "bulletPrefab", void 0);
-  Player = __decorate4([
-    regClass4()
+  Player = __decorate5([
+    regClass5()
   ], Player);
 })();
 //# sourceMappingURL=bundle.js.map

@@ -5,6 +5,8 @@ import { State } from "./State_FSM";
 import { Breed } from "./ClassType";
 import { Client, Mediator } from "./Mediator";
 
+import { MainUI } from "./MainUIRT";
+
 const { regClass, property } = Laya;
 
 @regClass()
@@ -17,6 +19,13 @@ export class Main extends Laya.Script {
     /** 闪避后蓄能时间 */
     private time: number = 0;
     private static MAX_TIME = 1500;
+
+    private ui: MainUI;
+
+    private initialUI() {
+        this.ui = this.owner.scene as MainUI;
+        this.ui.baseUI(this.ui);
+    }
 
     onStart() {
         console.log('Game start');
@@ -70,6 +79,8 @@ export class Main extends Laya.Script {
         mediator.register(clientC);
 
         clientA.sendMessage('ClientA enter');
+
+        this.initialUI();
     }
 
     handleKeyDown(evt: Laya.Event): void {
@@ -127,7 +138,7 @@ export class Main extends Laya.Script {
 
         // 状态模式
 
-        this.actor.onKeyDown(evt);
+        // this.actor.onKeyDown(evt);
     }
 
     onUpdate(): void {
