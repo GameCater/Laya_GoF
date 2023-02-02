@@ -22,6 +22,8 @@ export class Main extends Laya.Script {
 
     private ui: MainUI;
 
+    private tiledMap: Laya.TiledMap;
+
     private initialUI() {
         this.ui = this.owner.scene as MainUI;
         this.ui.baseUI(this.ui);
@@ -81,6 +83,21 @@ export class Main extends Laya.Script {
         clientA.sendMessage('ClientA enter');
 
         this.initialUI();
+
+        // let tiledmap = new Laya.TiledMap().createMap('resources/tiledMap/orthogonal-outside.json', new Laya.Rectangle(), Laya.Handler.create(this, () => {
+        //     Laya.stage.addChild((tiledmap as unknown as Laya.TiledMap).mapSprite());
+        // }))
+
+        this.tiledMap = new Laya.TiledMap();
+        // this.tiledMap.createMap('resources/tiledMap/orthogonal-outside.json', new Laya.Rectangle(0, 0, Laya.stage.width, Laya.stage.height), Laya.Handler.create(this, this.onMapCreated));
+
+    }
+
+    private onMapCreated() {
+        this.tiledMap.mapSprite().removeSelf();
+        this.tiledMap.setViewPortPivotByScale(0, 0);
+        this.tiledMap.scale = Laya.stage.height / this.tiledMap.width;
+        Laya.stage.addChild(this.tiledMap.mapSprite());
     }
 
     handleKeyDown(evt: Laya.Event): void {

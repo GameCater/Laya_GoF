@@ -26,7 +26,7 @@ export class MainUI extends MainUIRTBase {
 
 class ListItem extends Laya.Box {
     private enemyPrefabUrl: string;
-    // 个体展览模板
+    // 个体模板
     private child: Laya.Sprite;
     // 需要放置的个体
     private copied: Laya.Sprite;
@@ -49,6 +49,26 @@ class ListItem extends Laya.Box {
         this.height = 144;
         this.left = 28;
         this.bgColor = '#eee';
+        
+        Laya.stage.on(Laya.Event.MOUSE_MOVE, this, (e: Laya.Event) => {
+
+            // e.stageX
+            // 拷贝对象跟随鼠标移动
+            if (this.copied) {
+                let x = Laya.stage.mouseX;
+                let y = Laya.stage.mouseY;
+    
+                // this.copied.pos(x, y);
+                this.copied.x = x;
+                this.copied.y = y;
+
+                // this.copied.pos(x, y);
+
+                console.log(this.copied);
+                
+            }
+            
+        })
     }
 
     init() {        
@@ -92,21 +112,13 @@ class ListItem extends Laya.Box {
         let copied = res.create() as Laya.View;
         copied.x = Laya.stage.mouseX - 10;
         copied.y = Laya.stage.mouseY - 10;
+
+
         this.copied = copied;
         Laya.stage.addChild(this.copied);
 
-        this.storeX = copied.x;
-        this.storeY = copied.y;
+        console.log(this.copied);
 
-        this.XTouch = Laya.stage.mouseX;
-        this.YTouch = Laya.stage.mouseY;
-        
-        this.copied.on(Laya.Event.MOUSE_MOVE, this, (e: Laya.Event) => {
-            let x = Laya.stage.mouseX - (this.XTouch - this.storeX);
-            let y = Laya.stage.mouseY - (this.YTouch - this.storeY);
-
-            this.copied.pos(x, y);
-        })
     }
 
     onDestroy(): void {

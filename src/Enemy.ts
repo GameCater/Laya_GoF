@@ -5,7 +5,7 @@ const { regClass, property } = Laya;
 @regClass()
 export default class Enemy extends Laya.Script {
     public health: number = 100;
-    public state: State = new PassiveState();
+    // public state: State = new PassiveState();
     public scanDistance: number = 200;
 
     @property()
@@ -21,7 +21,7 @@ export default class Enemy extends Laya.Script {
         this.owner.on('Damage', this, this.handleDamage);
 
         this.health = 100;
-        this.state = new PassiveState();
+        // this.state = new PassiveState();
         this.animator.setParamsBool('Death', false);
     }
 
@@ -45,7 +45,7 @@ export default class Enemy extends Laya.Script {
 
     override onUpdate(): void {
         if (this.player) {
-            this.state.onUpdate(this, this.player.getComponent(Laya.Script) as Player);
+            // this.state.onUpdate(this, this.player.getComponent(Laya.Script) as Player);
         }
     }
 }

@@ -84,125 +84,6 @@ function __$decorate(assetId, codePath) {
     regClass()
   ], Bullet);
 
-  // E:/projects/laya3/Laya_GoF/src/Utils.ts
-  var Vector = class {
-    constructor(x, y) {
-      this.x = 0;
-      this.y = 0;
-      this.x = x;
-      this.y = y;
-    }
-    static distance(vec1, vec2) {
-      return Math.sqrt(Math.pow(vec1.x - vec2.x, 2) + Math.pow(vec1.y - vec2.y, 2));
-    }
-  };
-  __name(Vector, "Vector");
-
-  // E:/projects/laya3/Laya_GoF/src/EnemyState.ts
-  var State = class {
-    onUpdate(enemy, player) {
-    }
-    enter(enemy) {
-    }
-    exit(enemy) {
-    }
-  };
-  __name(State, "State");
-  var PassiveState = class extends State {
-    onUpdate(enemy, player) {
-      const enemy_position = new Vector(enemy.owner.x, enemy.owner.y);
-      const player_position = new Vector(player.owner.x, player.owner.y);
-      if (enemy.health >= 80 && Vector.distance(enemy_position, player_position) <= enemy.scanDistance) {
-        enemy.state = new ActiveState();
-        enemy.state.enter(enemy);
-      } else if (enemy.health < 80 && Vector.distance(enemy_position, player_position) <= enemy.scanDistance) {
-        enemy.state = new DefensiveState();
-        enemy.state.enter(enemy);
-      }
-    }
-    do() {
-      let randNum = Math.floor(Math.random() * 100);
-      let dayTime = Math.floor(Math.random() * 2);
-      switch (dayTime) {
-        case DayTime.MorningTime:
-          if (randNum < 3) {
-            console.log("\u5DE1\u903B");
-          } else if (randNum < 10) {
-            console.log("\u5403\u996D");
-          } else {
-            console.log("\u5B88\u536B");
-          }
-          break;
-        case DayTime.AfterNoonTime:
-          if (randNum < 20) {
-            console.log("\u8D70\u52A8");
-          } else if (randNum < 32) {
-            console.log("\u5403\u996D");
-          } else {
-            console.log("\u5B88\u536B");
-          }
-          break;
-        case DayTime.NightTime:
-          if (randNum < 25) {
-            console.log("\u8D70\u52A8");
-          } else if (randNum < 40) {
-            console.log("\u5403\u996D");
-          } else {
-            console.log("\u5B88\u536B");
-          }
-      }
-    }
-    enter(enemy) {
-      console.log("\u8FDB\u5165\u88AB\u52A8\u9ED8\u8BA4\u72B6\u6001");
-      this.do();
-    }
-  };
-  __name(PassiveState, "PassiveState");
-  var ActiveState = class extends State {
-    onUpdate(enemy, player) {
-      const enemy_position = new Vector(enemy.owner.x, enemy.owner.y);
-      const player_position = new Vector(player.owner.x, player.owner.y);
-      if (enemy.health >= 80 && Vector.distance(enemy_position, player_position) >= enemy.scanDistance) {
-        enemy.state = new PassiveState();
-        enemy.state.enter(enemy);
-      } else if (enemy.health < 80 && Vector.distance(enemy_position, player_position) < enemy.scanDistance) {
-        enemy.state = new DefensiveState();
-        enemy.state.enter(enemy);
-      }
-      this.follow(enemy, player);
-    }
-    enter(enemy) {
-      console.log("\u8FDB\u5165\u653B\u51FB\u72B6\u6001");
-    }
-    follow(enemy, player) {
-      Laya.Tween.to(enemy.owner, { x: player.owner.x, y: player.owner.y }, 1e3);
-    }
-  };
-  __name(ActiveState, "ActiveState");
-  var DefensiveState = class extends State {
-    onUpdate(enemy, player) {
-      const enemy_position = new Vector(enemy.owner.x, enemy.owner.y);
-      const player_position = new Vector(player.owner.x, player.owner.y);
-      if (Vector.distance(enemy_position, player_position) >= enemy.scanDistance) {
-        enemy.state = new PassiveState();
-        enemy.state.enter(enemy);
-      } else if (enemy.health >= 80) {
-        enemy.state = new ActiveState();
-        enemy.state.enter(enemy);
-      }
-    }
-    enter(enemy) {
-      console.log("\u8FDB\u5165\u9632\u5FA1\u72B6\u6001");
-    }
-  };
-  __name(DefensiveState, "DefensiveState");
-  var DayTime = /* @__PURE__ */ ((DayTime2) => {
-    DayTime2[DayTime2["MorningTime"] = 0] = "MorningTime";
-    DayTime2[DayTime2["AfterNoonTime"] = 1] = "AfterNoonTime";
-    DayTime2[DayTime2["NightTime"] = 2] = "NightTime";
-    return DayTime2;
-  })(DayTime || {});
-
   // E:/projects/laya3/Laya_GoF/src/Enemy.ts
   var __decorate2 = __$decorate("12843c7a-55a3-4124-bf12-0e47353d5c5a", "../src/Enemy.ts");
   var _a;
@@ -211,7 +92,6 @@ function __$decorate(assetId, codePath) {
     constructor() {
       super(...arguments);
       this.health = 100;
-      this.state = new PassiveState();
       this.scanDistance = 200;
     }
     onAwake() {
@@ -220,7 +100,6 @@ function __$decorate(assetId, codePath) {
     onEnable() {
       this.owner.on("Damage", this, this.handleDamage);
       this.health = 100;
-      this.state = new PassiveState();
       this.animator.setParamsBool("Death", false);
     }
     handleDamage(damage) {
@@ -238,7 +117,6 @@ function __$decorate(assetId, codePath) {
     }
     onUpdate() {
       if (this.player) {
-        this.state.onUpdate(this, this.player.getComponent(Laya.Script));
       }
     }
   }, "Enemy");
@@ -561,6 +439,13 @@ function __$decorate(assetId, codePath) {
       mediator.register(clientC);
       clientA.sendMessage("ClientA enter");
       this.initialUI();
+      this.tiledMap = new Laya.TiledMap();
+    }
+    onMapCreated() {
+      this.tiledMap.mapSprite().removeSelf();
+      this.tiledMap.setViewPortPivotByScale(0, 0);
+      this.tiledMap.scale = Laya.stage.height / this.tiledMap.width;
+      Laya.stage.addChild(this.tiledMap.mapSprite());
     }
     handleKeyDown(evt) {
     }
@@ -612,6 +497,15 @@ function __$decorate(assetId, codePath) {
       this.height = 144;
       this.left = 28;
       this.bgColor = "#eee";
+      Laya.stage.on(Laya.Event.MOUSE_MOVE, this, (e) => {
+        if (this.copied) {
+          let x = Laya.stage.mouseX;
+          let y = Laya.stage.mouseY;
+          this.copied.x = x;
+          this.copied.y = y;
+          console.log(this.copied);
+        }
+      });
     }
     init() {
       Laya.loader.load(`resources/${this.enemyPrefabUrl}`).then((res) => {
@@ -645,15 +539,7 @@ function __$decorate(assetId, codePath) {
       copied.y = Laya.stage.mouseY - 10;
       this.copied = copied;
       Laya.stage.addChild(this.copied);
-      this.storeX = copied.x;
-      this.storeY = copied.y;
-      this.XTouch = Laya.stage.mouseX;
-      this.YTouch = Laya.stage.mouseY;
-      this.copied.on(Laya.Event.MOUSE_MOVE, this, (e2) => {
-        let x = Laya.stage.mouseX - (this.XTouch - this.storeX);
-        let y = Laya.stage.mouseY - (this.YTouch - this.storeY);
-        this.copied.pos(x, y);
-      });
+      console.log(this.copied);
     }
     onDestroy() {
       Laya.stage.off(Laya.Event.MOUSE_UP, this, this.handleMouseUp);
