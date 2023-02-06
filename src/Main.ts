@@ -6,6 +6,7 @@ import { Breed } from "./ClassType";
 import { Client, Mediator } from "./Mediator";
 
 import { MainUI } from "./MainUIRT";
+import { Camera2D } from "./Camera2D";
 
 const { regClass, property } = Laya;
 
@@ -84,6 +85,8 @@ export class Main extends Laya.Script {
 
         this.initialUI();
 
+
+        // tiledMap
         // let tiledmap = new Laya.TiledMap().createMap('resources/tiledMap/orthogonal-outside.json', new Laya.Rectangle(), Laya.Handler.create(this, () => {
         //     Laya.stage.addChild((tiledmap as unknown as Laya.TiledMap).mapSprite());
         // }))
@@ -91,7 +94,18 @@ export class Main extends Laya.Script {
         this.tiledMap = new Laya.TiledMap();
         // this.tiledMap.createMap('resources/tiledMap/orthogonal-outside.json', new Laya.Rectangle(0, 0, Laya.stage.width, Laya.stage.height), Laya.Handler.create(this, this.onMapCreated));
 
+
+        let player = this.owner.getChildByName('Player') as Laya.Sprite;  
+        this.camera = new Camera2D(player);
+        Laya.stage.addChild(this.camera);
+
+        console.log(this.owner);
+        console.log(Laya.stage);
+        
+        
     }
+
+    private camera: Camera2D;
 
     private onMapCreated() {
         this.tiledMap.mapSprite().removeSelf();
@@ -159,6 +173,7 @@ export class Main extends Laya.Script {
     }
 
     onUpdate(): void {
+        this.camera.updateCamera();
         this.actor.onUpdate();
     }
 }

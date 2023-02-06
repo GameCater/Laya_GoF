@@ -17,6 +17,7 @@
   "_$child": [
     {
       "_$id": "qolspto8",
+      "_$var": true,
       "_$type": "Sprite",
       "name": "Player",
       "x": 518,
@@ -86,77 +87,6 @@
           "hitTestPrior": false,
           "drawCallOptimize": false,
           "cacheAs": "none"
-        }
-      ]
-    },
-    {
-      "_$id": "o0sovm7k",
-      "_$type": "Sprite",
-      "name": "Enemy",
-      "x": 500,
-      "y": 106,
-      "width": 78,
-      "height": 78,
-      "pivotX": 39,
-      "pivotY": 39,
-      "_gcmds": [
-        {
-          "_$type": "DrawRectCmd",
-          "x": 0,
-          "y": 0,
-          "width": 1,
-          "height": 1,
-          "percent": true,
-          "lineWidth": 1,
-          "lineColor": "#000000",
-          "fillColor": "rgba(255, 36, 52, 1)"
-        }
-      ],
-      "_$comp": [
-        {
-          "_$type": "12843c7a-55a3-4124-bf12-0e47353d5c5a",
-          "scriptPath": "../src/Enemy.ts",
-          "player": {
-            "_$ref": "qolspto8"
-          }
-        },
-        {
-          "_$type": "RigidBody",
-          "type": "kinematic",
-          "linearVelocity": {
-            "_$type": "Vector2"
-          }
-        },
-        {
-          "_$type": "BoxCollider",
-          "width": 78,
-          "height": 78
-        },
-        {
-          "_$type": "Animator2D",
-          "controller": {
-            "_$uuid": "730728a2-21ba-4ff6-ae16-4d57d389aa7e",
-            "_$type": "AnimationController2D"
-          },
-          "controllerLayers": [
-            {
-              "_$type": "AnimatorControllerLayer2D",
-              "name": "Base Layer",
-              "states": [
-                {
-                  "_$type": "AnimatorState2D",
-                  "name": "death",
-                  "clipStart": 0,
-                  "clip": {
-                    "_$uuid": "664b4c12-b6ac-4011-bff8-59e0770538c7",
-                    "_$type": "AnimationClip2D"
-                  },
-                  "soloTransitions": []
-                }
-              ],
-              "defaultStateName": "death"
-            }
-          ]
         }
       ]
     },

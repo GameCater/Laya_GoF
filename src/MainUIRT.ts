@@ -1,3 +1,4 @@
+import Enemy from "./Enemy";
 import { MainUIRTBase } from "./MainUIRT.generated";
 
 const { regClass, property } = Laya;
@@ -6,7 +7,8 @@ const { regClass, property } = Laya;
 export class MainUI extends MainUIRTBase {
 
     private prefabUrls: string[] = [
-        'Enemy.lh'
+        'Enemy.lh',
+        'EnemyPro.lh',
     ];
 
     constructor() {
@@ -18,10 +20,10 @@ export class MainUI extends MainUIRTBase {
         this.list_enemies.itemRender = ListItem;
         this.list_enemies.vScrollBarSkin = '';
 
-        this.list_enemies.renderHandler = Laya.Handler.create(this, (cell: ListItem) => {            
-            cell.init();
-        });
-    }
+        this.list_enemies.renderHandler = Laya.Handler.create(this, (cell: ListItem) => {
+            cell.init(this.Player);
+        }, null, false);
+    }   
 }
 
 class ListItem extends Laya.Box {
@@ -38,6 +40,8 @@ class ListItem extends Laya.Box {
 
     private XTouch: number;
     private YTouch: number;
+
+    private player: Laya.Sprite;
 
     set dataSource(data: string) {
         this.enemyPrefabUrl = data;
@@ -57,21 +61,18 @@ class ListItem extends Laya.Box {
             if (this.copied) {
                 let x = Laya.stage.mouseX;
                 let y = Laya.stage.mouseY;
-    
-                // this.copied.pos(x, y);
-                this.copied.x = x;
-                this.copied.y = y;
 
-                // this.copied.pos(x, y);
-
-                console.log(this.copied);
-                
+                this.copied.pos(x, y);        
             }
             
         })
     }
 
-    init() {        
+    init(player: Laya.Sprite) {
+        
+        // 取得游戏舞台中的玩家
+        this.player = player;
+        
         Laya.loader.load(`resources/${this.enemyPrefabUrl}`).then((res: Laya.Prefab) => {
             let enemy = res.create() as Laya.View;
             enemy.left = this.width - enemy.width >> 1;
@@ -93,7 +94,8 @@ class ListItem extends Laya.Box {
     handleMouseUp() {
         if (!this.copied) return;
 
-        this.copied.destroy();
+        // this.copied.destroy();
+        (this.copied.getComponent(Laya.Script) as Enemy).player = this.player;
         this.copied = null;
     }
 
@@ -109,16 +111,12 @@ class ListItem extends Laya.Box {
     copyTarget(e: Laya.Event, res: Laya.Prefab) {
         if (this.copied) return;
          
-        let copied = res.create() as Laya.View;
+        let copied = (res.create() as Laya.View).getChildAt(0) as Laya.Sprite;
         copied.x = Laya.stage.mouseX - 10;
         copied.y = Laya.stage.mouseY - 10;
 
-
         this.copied = copied;
         Laya.stage.addChild(this.copied);
-
-        console.log(this.copied);
-
     }
 
     onDestroy(): void {

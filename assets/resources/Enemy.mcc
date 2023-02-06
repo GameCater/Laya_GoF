@@ -5,7 +5,7 @@
     {
       "name": "Base Layer",
       "defaultStateName": "death",
-      "playOnWake": false,
+      "playOnWake": true,
       "blendingMode": 0,
       "states": [
         {

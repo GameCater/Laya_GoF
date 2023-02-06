@@ -5,6 +5,7 @@
  * Scene.ls
  */
 export class MainUIRTBase extends Laya.Scene {
+    public Player: Laya.Sprite;
     public list_enemies: Laya.List;
 }
 
