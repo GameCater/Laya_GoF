@@ -5,7 +5,8 @@
     "farPlane": 20000,
     "zoomSpeed": 1,
     "transformSpeed": 1,
-    "depthTexture": false
+    "depthTexture": false,
+    "_showPostProcess": true
   },
   "grid": {
     "show": true

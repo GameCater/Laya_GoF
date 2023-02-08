@@ -585,22 +585,44 @@ function __$decorate(assetId, codePath) {
       clientA.sendMessage("ClientA enter");
       this.initialUI();
       this.tiledMap = new Laya.TiledMap();
+      this.tiledMap.createMap("resources/tiledMap/level1.json", new Laya.Rectangle(0, 0, Laya.stage.width, Laya.stage.height), Laya.Handler.create(this, this.onMapCreated), null, null, true);
       let player = this.owner.getChildByName("Player");
       this.camera = new Camera2D(player);
       Laya.stage.addChild(this.camera);
-      console.log(this.owner);
-      console.log(Laya.stage);
     }
     onMapCreated() {
-      this.tiledMap.mapSprite().removeSelf();
+      let mapSprite = this.tiledMap.mapSprite();
+      mapSprite.removeSelf();
+      mapSprite.zOrder = -1;
+      Laya.stage.addChild(mapSprite);
+      let scareFactor = Math.min(Laya.stage.width / this.tiledMap.width, Laya.stage.height / this.tiledMap.height);
       this.tiledMap.setViewPortPivotByScale(0, 0);
-      this.tiledMap.scale = Laya.stage.height / this.tiledMap.width;
-      Laya.stage.addChild(this.tiledMap.mapSprite());
+      this.tiledMap.scale = scareFactor;
+      mapSprite.x = (Laya.stage.width - this.tiledMap.width * scareFactor) / 2;
+      let objectLayer = this.tiledMap.getLayerByName("entities");
+      let playerGrid = objectLayer.getObjectByName("player");
+      let newSprite = new Laya.Sprite();
+      newSprite.size(50, 50);
+      let newPoint = objectLayer.localToGlobal(new Laya.Point(playerGrid.x, playerGrid.y));
+      newSprite.pos(newPoint.x, newPoint.y);
+      newSprite.graphics.drawRect(0, 0, 50, 50, "#eee");
+      Laya.stage.addChild(newSprite);
+      let rgBody = newSprite.addComponent(Laya.RigidBody);
+      let boxColl = newSprite.addComponent(Laya.BoxCollider);
+      boxColl.width = newSprite.width;
+      boxColl.height = newSprite.height;
+      let collisionLayer = this.tiledMap.getLayerByName("collision");
+      console.log(collisionLayer);
+      for (let i = 0; i < collisionLayer.numChildren; i++) {
+        let gridSprite = collisionLayer.getChildAt(i);
+        let gridArea = gridSprite.getBounds();
+        let cols = gridArea.width / this.tiledMap.tileWidth;
+        let rows = gridArea.height / this.tiledMap.tileHeight;
+      }
     }
     handleKeyDown(evt) {
     }
     onUpdate() {
-      this.camera.updateCamera();
       this.actor.onUpdate();
     }
   }, "Main");
