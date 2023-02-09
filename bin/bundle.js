@@ -618,6 +618,25 @@ function __$decorate(assetId, codePath) {
         let gridArea = gridSprite.getBounds();
         let cols = gridArea.width / this.tiledMap.tileWidth;
         let rows = gridArea.height / this.tiledMap.tileHeight;
+        for (let i2 = 0; i2 < cols; i2++) {
+          for (let j = 0; j < rows; j++) {
+            let s = collisionLayer.getTileData(i2, j);
+            if (s == 1025) {
+              let curTileS = collisionLayer.getDrawSprite(i2, j);
+              let curTile = new Laya.Sprite();
+              let newPos = new Laya.Point();
+              newPos = curTileS.globalToLocal(newPos);
+              curTile.pos(newPos.x, newPos.y);
+              curTile.width = curTile.height = 32;
+              let rg = curTile.addComponent(Laya.RigidBody);
+              rg.type = "static";
+              let box = curTile.addComponent(Laya.BoxCollider);
+              box.width = box.height = 32;
+              curTile.graphics.drawRect(0, 0, 32, 32, "#fff");
+              collisionLayer.addChild(curTile);
+            }
+          }
+        }
       }
     }
     handleKeyDown(evt) {

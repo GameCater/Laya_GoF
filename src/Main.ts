@@ -146,6 +146,25 @@ export class Main extends Laya.Script {
             let cols = gridArea.width / this.tiledMap.tileWidth;
             let rows = gridArea.height / this.tiledMap.tileHeight;
 
+            for (let i = 0; i < cols; i ++) {
+                for (let j = 0; j < rows; j ++) {
+                    let s = collisionLayer.getTileData(i, j);
+                    if (s == 1025) {
+                        let curTileS = collisionLayer.getDrawSprite(i, j);
+                        let curTile = new Laya.Sprite();
+                        let newPos = new Laya.Point();
+                        newPos = curTileS.globalToLocal(newPos);
+                        curTile.pos(newPos.x, newPos.y);
+                        curTile.width = curTile.height = 32;
+                        let rg = curTile.addComponent(Laya.RigidBody) as Laya.RigidBody;
+                        rg.type = 'static';
+                        let box = curTile.addComponent(Laya.BoxCollider) as Laya.BoxCollider;
+                        box.width = box.height = 32;
+                        curTile.graphics.drawRect(0, 0, 32, 32, '#fff');
+                        collisionLayer.addChild(curTile);
+                    }                    
+                }
+            }
             
         }
         
