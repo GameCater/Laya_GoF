@@ -83,8 +83,8 @@
                  "rotation":0,
                  "visible":true,
                  "width":32,
-                 "x":385,
-                 "y":289
+                 "x":221.667,
+                 "y":352.333
                 }, 
                 {
                  "class":"",
@@ -96,6 +96,17 @@
                  "width":32,
                  "x":705,
                  "y":354
+                }, 
+                {
+                 "class":"",
+                 "height":32,
+                 "id":13,
+                 "name":"knight",
+                 "rotation":0,
+                 "visible":true,
+                 "width":32,
+                 "x":626,
+                 "y":398.667
                 }, 
                 {
                  "class":"",
@@ -220,7 +231,7 @@
          "y":0
         }],
  "nextlayerid":4,
- "nextobjectid":13,
+ "nextobjectid":14,
  "orientation":"orthogonal",
  "properties":[
         {

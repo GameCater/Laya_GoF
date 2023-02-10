@@ -539,12 +539,18 @@ function __$decorate(assetId, codePath) {
 
   // E:/projects/laya3/Laya_GoF/src/Main.ts
   var __decorate4 = __$decorate("7bad1742-6eed-4d8d-81c0-501dc5bf03d6", "../src/Main.ts");
+  var _a3;
+  var _b;
   var { regClass: regClass4, property: property3 } = Laya;
   var Main = /* @__PURE__ */ __name(class Main2 extends Laya.Script {
     constructor() {
       super(...arguments);
       this._state = 0 /* STATE_STANDING */;
       this.time = 0;
+      this.mapX = 0;
+      this.mapY = 0;
+      this.mLastX = 0;
+      this.mLastY = 0;
     }
     initialUI() {
       this.ui = this.owner.scene;
@@ -585,67 +591,59 @@ function __$decorate(assetId, codePath) {
       clientA.sendMessage("ClientA enter");
       this.initialUI();
       this.tiledMap = new Laya.TiledMap();
-      this.tiledMap.createMap("resources/tiledMap/level1.json", new Laya.Rectangle(0, 0, Laya.stage.width, Laya.stage.height), Laya.Handler.create(this, this.onMapCreated), null, null, true);
-      let player = this.owner.getChildByName("Player");
-      this.camera = new Camera2D(player);
-      Laya.stage.addChild(this.camera);
+      this.viewport = new Laya.Rectangle(0, 0, this.sceenCamera.width, this.sceenCamera.height);
+      this.tiledMap.createMap("resources/tiledMap/level1.json", this.viewport, Laya.Handler.create(this, this.onMapCreated), null, null, true);
+    }
+    moveViewport() {
+      let moveX = this.mapX - (Laya.stage.mouseX - this.mLastMouseX);
+      let moveY = this.mapY - (Laya.stage.mouseY - this.mLastMouseY);
+      this.tiledMap.moveViewPort(moveX, moveY);
     }
     onMapCreated() {
       let mapSprite = this.tiledMap.mapSprite();
       mapSprite.removeSelf();
+      this.sceenCamera.addChild(mapSprite);
       mapSprite.zOrder = -1;
-      Laya.stage.addChild(mapSprite);
-      let scareFactor = Math.min(Laya.stage.width / this.tiledMap.width, Laya.stage.height / this.tiledMap.height);
-      this.tiledMap.setViewPortPivotByScale(0, 0);
-      this.tiledMap.scale = scareFactor;
-      mapSprite.x = (Laya.stage.width - this.tiledMap.width * scareFactor) / 2;
       let objectLayer = this.tiledMap.getLayerByName("entities");
       let playerGrid = objectLayer.getObjectByName("player");
-      let newSprite = new Laya.Sprite();
-      newSprite.size(50, 50);
       let newPoint = objectLayer.localToGlobal(new Laya.Point(playerGrid.x, playerGrid.y));
-      newSprite.pos(newPoint.x, newPoint.y);
-      newSprite.graphics.drawRect(0, 0, 50, 50, "#eee");
-      Laya.stage.addChild(newSprite);
-      let rgBody = newSprite.addComponent(Laya.RigidBody);
-      let boxColl = newSprite.addComponent(Laya.BoxCollider);
-      boxColl.width = newSprite.width;
-      boxColl.height = newSprite.height;
-      let collisionLayer = this.tiledMap.getLayerByName("collision");
-      console.log(collisionLayer);
-      for (let i = 0; i < collisionLayer.numChildren; i++) {
-        let gridSprite = collisionLayer.getChildAt(i);
-        let gridArea = gridSprite.getBounds();
-        let cols = gridArea.width / this.tiledMap.tileWidth;
-        let rows = gridArea.height / this.tiledMap.tileHeight;
-        for (let i2 = 0; i2 < cols; i2++) {
-          for (let j = 0; j < rows; j++) {
-            let s = collisionLayer.getTileData(i2, j);
-            if (s == 1025) {
-              let curTileS = collisionLayer.getDrawSprite(i2, j);
-              let curTile = new Laya.Sprite();
-              let newPos = new Laya.Point();
-              newPos = curTileS.globalToLocal(newPos);
-              curTile.pos(newPos.x, newPos.y);
-              curTile.width = curTile.height = 32;
-              let rg = curTile.addComponent(Laya.RigidBody);
-              rg.type = "static";
-              let box = curTile.addComponent(Laya.BoxCollider);
-              box.width = box.height = 32;
-              curTile.graphics.drawRect(0, 0, 32, 32, "#fff");
-              collisionLayer.addChild(curTile);
-            }
-          }
-        }
-      }
+      mapSprite.pivotX = playerGrid.x;
+      mapSprite.pivotY = playerGrid.y;
+      mapSprite.x = this.sceenCamera.width / 2;
+      mapSprite.y = this.sceenCamera.height / 2;
+      mapSprite.scale(2, 2);
+      let pos = new Laya.Point(playerGrid.x, playerGrid.y);
+      mapSprite.localToGlobal(pos);
+      this.sceenCamera.globalToLocal(pos);
+      this.player.x = pos.x;
+      this.player.y = pos.y;
     }
     handleKeyDown(evt) {
     }
     onUpdate() {
-      this.actor.onUpdate();
+    }
+    onKeyPress(evt) {
+      if (evt.key.toLowerCase() === "w") {
+        this.mLastY -= 2;
+      } else if (evt.key.toLowerCase() === "s") {
+        this.mLastY += 2;
+      } else if (evt.key.toLowerCase() === "a") {
+        this.mLastX -= 2;
+      } else if (evt.key.toLowerCase() === "d") {
+        this.mLastX += 2;
+      }
+      this.tiledMap.moveViewPort(this.mLastX, this.mLastY);
     }
   }, "Main");
   Main.MAX_TIME = 1500;
+  __decorate4([
+    property3(),
+    __metadata("design:type", typeof (_a3 = typeof Laya !== "undefined" && Laya.Sprite) === "function" ? _a3 : Object)
+  ], Main.prototype, "sceenCamera", void 0);
+  __decorate4([
+    property3(),
+    __metadata("design:type", typeof (_b = typeof Laya !== "undefined" && Laya.Sprite) === "function" ? _b : Object)
+  ], Main.prototype, "player", void 0);
   Main = __decorate4([
     regClass4()
   ], Main);
@@ -743,7 +741,7 @@ function __$decorate(assetId, codePath) {
 
   // E:/projects/laya3/Laya_GoF/src/Player.ts
   var __decorate6 = __$decorate("a51a9993-7212-4529-af9d-4d56a3c8a7a3", "../src/Player.ts");
-  var _a3;
+  var _a4;
   var { regClass: regClass6, property: property5 } = Laya;
   var Player = /* @__PURE__ */ __name(class Player2 extends Laya.Script {
     constructor() {
@@ -773,7 +771,7 @@ function __$decorate(assetId, codePath) {
     onKeyDown(evt) {
       if (evt.key.toLowerCase() === " ") {
         let bullet = Laya.Pool.getItemByCreateFun("Bullet", this.spawnBullet, this);
-        Laya.stage.addChild(bullet);
+        this.self.parent.addChild(bullet);
         bullet.x = (this.self.width - bullet.width) / 2 + this.self.x + bullet.width / 2;
         bullet.y = (this.self.height - bullet.height) / 2 + this.self.y + bullet.height / 2;
         bullet.getComponent(Laya.Script).isDestoryed = false;
@@ -800,7 +798,7 @@ function __$decorate(assetId, codePath) {
   ], Player.prototype, "speed", void 0);
   __decorate6([
     property5(),
-    __metadata("design:type", typeof (_a3 = typeof Laya !== "undefined" && Laya.Prefab) === "function" ? _a3 : Object)
+    __metadata("design:type", typeof (_a4 = typeof Laya !== "undefined" && Laya.Prefab) === "function" ? _a4 : Object)
   ], Player.prototype, "bulletPrefab", void 0);
   Player = __decorate6([
     regClass6()

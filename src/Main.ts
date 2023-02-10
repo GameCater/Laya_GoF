@@ -24,6 +24,19 @@ export class Main extends Laya.Script {
     private ui: MainUI;
 
     private tiledMap: Laya.TiledMap;
+    private viewport: Laya.Rectangle;
+    private mapX: number = 0;
+    private mapY: number = 0;
+
+    private mLastMouseX: number;
+    private mLastMouseY: number;
+
+
+    @property()
+    sceenCamera: Laya.Sprite;
+
+    @property()
+    player: Laya.Sprite;
 
     private initialUI() {
         this.ui = this.owner.scene as MainUI;
@@ -87,90 +100,78 @@ export class Main extends Laya.Script {
 
 
         // tiledMap
-        // let tiledmap = new Laya.TiledMap().createMap('resources/tiledMap/orthogonal-outside.json', new Laya.Rectangle(), Laya.Handler.create(this, () => {
-        //     Laya.stage.addChild((tiledmap as unknown as Laya.TiledMap).mapSprite());
-        // }))
-
         this.tiledMap = new Laya.TiledMap();
-        // this.tiledMap.createMap('resources/tiledMap/orthogonal-outside.json', new Laya.Rectangle(0, 0, Laya.stage.width, Laya.stage.height), Laya.Handler.create(this, this.onMapCreated));
+        this.viewport = new Laya.Rectangle(0, 0, this.sceenCamera.width, this.sceenCamera.height);
 
         this.tiledMap.createMap('resources/tiledMap/level1.json', 
-                                new Laya.Rectangle(0, 0, Laya.stage.width, Laya.stage.height), 
+                                this.viewport,
                                 Laya.Handler.create(this, this.onMapCreated),
                                 null,
                                 null,
                                 true);
-
-        let player = this.owner.getChildByName('Player') as Laya.Sprite;  
-        this.camera = new Camera2D(player);
-        Laya.stage.addChild(this.camera);
     }
 
-    private camera: Camera2D;
+    private moveViewport() {
+        let moveX = this.mapX - (Laya.stage.mouseX - this.mLastMouseX);
+        let moveY = this.mapY - (Laya.stage.mouseY - this.mLastMouseY);
+        this.tiledMap.moveViewPort(moveX, moveY);
+    }
 
     private onMapCreated() {
         let mapSprite = this.tiledMap.mapSprite();
         mapSprite.removeSelf();
+        this.sceenCamera.addChild(mapSprite);
         mapSprite.zOrder = -1;
-        Laya.stage.addChild(mapSprite);
 
-        let scareFactor = Math.min(Laya.stage.width / this.tiledMap.width, Laya.stage.height / this.tiledMap.height);
-        this.tiledMap.setViewPortPivotByScale(0, 0);
-        this.tiledMap.scale = scareFactor;
+        // 想让地图居中显示的缩放因子
+        // let scareFactor = Math.min(Laya.stage.width / this.tiledMap.width, Laya.stage.height / this.tiledMap.height);
+        // scareFactor += 0.5;
+        // tiledmap 居中
+        // mapSprite.x = (Laya.stage.width - this.tiledMap.width * scareFactor) / 2;
+        // mapSprite.y = (Laya.stage.height - this.tiledMap.height * scareFactor) / 2;
+
+        // this.tiledMap.setViewPortPivotByScale(0.5, 0.5);
+        // this.tiledMap.scale = scareFactor;
         // mapSprite.scale(scareFactor, scareFactor);
-        mapSprite.x = (Laya.stage.width - this.tiledMap.width * scareFactor) / 2;
-        
 
+        // Laya.stage.on(Laya.Event.MOUSE_DOWN, this, () => {
+        //     this.mLastMouseX = Laya.stage.mouseX;
+        //     this.mLastMouseY = Laya.stage.mouseY;
+        //     Laya.stage.on(Laya.Event.MOUSE_MOVE, this, this.moveViewport)
+        // })
+
+        // Laya.stage.on(Laya.Event.MOUSE_UP, this, () => {
+        //     this.mapX = this.mapX - (Laya.stage.mouseX - this.mLastMouseX);
+        //     this.mapY = this.mapY - (Laya.stage.mouseY - this.mLastMouseY);
+        //     Laya.stage.off(Laya.Event.MOUSE_MOVE, this, this.moveViewport);
+        // })
+
+        // 获取tilemap对象层
         let objectLayer = this.tiledMap.getLayerByName('entities');
+        // 获取对象层玩家tile
         let playerGrid = objectLayer.getObjectByName('player');
-        let newSprite = new Laya.Sprite();
-        newSprite.size(50, 50);
         // 把grid相对于layer的本地坐标转为相对于stage的全局坐标
         let newPoint = objectLayer.localToGlobal(new Laya.Point(playerGrid.x, playerGrid.y));
-        newSprite.pos(newPoint.x, newPoint.y)
-        newSprite.graphics.drawRect(0, 0, 50, 50, '#eee');
-        Laya.stage.addChild(newSprite);
 
-        // 为newSprite(player)添加碰撞
-        let rgBody: Laya.RigidBody = newSprite.addComponent(Laya.RigidBody);
-        let boxColl: Laya.BoxCollider = newSprite.addComponent(Laya.BoxCollider);
-        boxColl.width = newSprite.width;
-        boxColl.height = newSprite.height;
+        // map缩放中心以player为中心 目的是使玩家定位到viewport中心，而整个舞台就是一个viewport
+        mapSprite.pivotX = playerGrid.x;
+        mapSprite.pivotY = playerGrid.y;
 
-        // 为碰撞层所有grid添加碰撞体
-        let collisionLayer: Laya.MapLayer = this.tiledMap.getLayerByName('collision');
-        console.log(collisionLayer);
-        for (let i = 0; i < collisionLayer.numChildren; i ++) {
-            let gridSprite: Laya.GridSprite = collisionLayer.getChildAt(i) as Laya.GridSprite;
-            let gridArea = gridSprite.getBounds();
-            let cols = gridArea.width / this.tiledMap.tileWidth;
-            let rows = gridArea.height / this.tiledMap.tileHeight;
+        mapSprite.x = this.sceenCamera.width / 2;
+        mapSprite.y = this.sceenCamera.height / 2;
 
-            for (let i = 0; i < cols; i ++) {
-                for (let j = 0; j < rows; j ++) {
-                    let s = collisionLayer.getTileData(i, j);
-                    if (s == 1025) {
-                        let curTileS = collisionLayer.getDrawSprite(i, j);
-                        let curTile = new Laya.Sprite();
-                        let newPos = new Laya.Point();
-                        newPos = curTileS.globalToLocal(newPos);
-                        curTile.pos(newPos.x, newPos.y);
-                        curTile.width = curTile.height = 32;
-                        let rg = curTile.addComponent(Laya.RigidBody) as Laya.RigidBody;
-                        rg.type = 'static';
-                        let box = curTile.addComponent(Laya.BoxCollider) as Laya.BoxCollider;
-                        box.width = box.height = 32;
-                        curTile.graphics.drawRect(0, 0, 32, 32, '#fff');
-                        collisionLayer.addChild(curTile);
-                    }                    
-                }
-            }
-            
-        }
-        
+        // 放大mapsprite
+        mapSprite.scale(2, 2);
 
-        
-        
+        let pos = new Laya.Point(playerGrid.x, playerGrid.y);
+        // 先从相对于mapSprite转为全局坐标
+        mapSprite.localToGlobal(pos);
+        // 从全局坐标转为相对于screenCamera的局部坐标
+        this.sceenCamera.globalToLocal(pos);
+
+        // 玩家初始位置 相对于mapsprite
+        this.player.x = pos.x;
+        this.player.y = pos.y;
 
     }
 
@@ -234,6 +235,27 @@ export class Main extends Laya.Script {
 
     onUpdate(): void {
         // this.camera.updateCamera();
-        this.actor.onUpdate();
+        // this.actor.onUpdate();
+        
+    }
+
+    private mLastX: number = 0;
+    private mLastY: number = 0;
+    onKeyPress(evt: Laya.Event): void {
+        if (evt.key.toLowerCase() === 'w') {
+            this.mLastY -= 2;
+
+        } else if (evt.key.toLowerCase() === 's') {
+            this.mLastY += 2;
+
+        } else if (evt.key.toLowerCase() === 'a') {
+           this.mLastX -= 2;
+
+        } else if (evt.key.toLowerCase() === 'd') {
+            this.mLastX += 2;
+
+        }
+
+        this.tiledMap.moveViewPort(this.mLastX, this.mLastY);
     }
 }

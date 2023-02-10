@@ -48,7 +48,8 @@ export default class Player extends Laya.Script {
             // let bullet: Laya.Sprite = this.bulletPrefab.create() as Laya.Sprite;
 
             let bullet: Laya.Sprite = Laya.Pool.getItemByCreateFun('Bullet', this.spawnBullet, this);
-            Laya.stage.addChild(bullet);
+            
+            this.self.parent.addChild(bullet);
 
             bullet.x = (this.self.width - bullet.width) / 2 + this.self.x + bullet.width / 2;
             bullet.y = (this.self.height - bullet.height) / 2 + this.self.y + bullet.height / 2;
